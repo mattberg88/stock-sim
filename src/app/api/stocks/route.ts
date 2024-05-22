@@ -1,15 +1,11 @@
 import { NextResponse } from "next/server";
 
 const STOCKS = [
-    { name: "Apple Inc.", ticker: "AAPL"},
-    { name: "Alphabet Inc.", ticker: "GOOG"},
-    { name: "Microsoft Corp", ticker: "MSFT"},
-    { name: "Meta Platforms, Inc.", ticker: "META"},
-    { name: "Amazon.com, Inc.", ticker: "AMZN" },
-    { name: "Tesla, Inc.", ticker: "TSLA" },
-    { name: "NVIDIA Corporation", ticker: "NVDA" },
-    { name: "PepsiCo, Inc.", ticker: "PEP" },
-    { name: "Costco Wholesale Corporation", ticker: "COST"}
+    { name: "MicroSectors FANG Index -3X", ticker: "FNGD"},
+    { name: "MacroGenics", ticker: "MGNX" },
+    { name: "GameStop", ticker: "GME" },
+    { name: "AMC", ticker: "AMC" }
+
 ]
 
 export async function GET(req: Request) {

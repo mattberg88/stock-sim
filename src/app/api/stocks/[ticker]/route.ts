@@ -22,6 +22,7 @@ export async function GET(req: Request, { params }: { params: { ticker: string }
     if (cached !== null) {
         console.log("Cache HIT")
         data = JSON.parse(cached.data)
+        console.log('data', data)
     }
     else {
         console.log("Cache MISS")

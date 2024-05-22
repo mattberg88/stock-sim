@@ -3,7 +3,7 @@
 import StockPicker from "@/components/StockPicker";
 import StockChart from "@/components/StockChart";
 import { calculateDiffs, predictPrices } from "@/helpers/SimulationHelper";
-import { Alert, Button, Container, Divider, Grid, Link, Paper, Skeleton, Snackbar, TextField, Typography } from "@mui/material";
+import { Alert, Button, Container, Divider, Grid, Link, Paper, Skeleton, Snackbar, TextField, ThemeProvider, Typography, createTheme } from "@mui/material";
 import { ChartData } from "chart.js";
 import { useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
@@ -67,7 +67,7 @@ export default function Home() {
                 p: key,
                 ds: mappedData
             })
-        })  
+        })
 
         setPredicitionDataSets(datasets)
 
@@ -89,46 +89,45 @@ export default function Home() {
                 {
                     label: 'Historical',
                     data: historicalDataSet ?? [],
-                    borderColor: 'rgb(255, 99, 132)',
-                    backgroundColor: 'rgba(255, 99, 132, 0.5)',    
+                    borderColor: 'rgb(99, 200, 200)',
+                    backgroundColor: 'rgb(99, 200, 200, 0.5)',
                 }
             ]
         }
-    
+
         if (predicitionDataSets?.length! > 0) {
             for (let predicition of predicitionDataSets!) {
                 chartData.datasets.push({
                     label: `Predicition ${predicition.p}%`,
                     data: predicition.ds,
                     borderColor: 'rgb(200, 200, 200)',
-                    backgroundColor: 'rgba(200, 200, 200, 0.5)',    
+                    backgroundColor: 'rgba(200, 200, 200, 0.5)',
                 })
             }
-        } 
-        
+        }
+
         return chartData
     }, [historicalDataSet, predicitionDataSets])
 
+    const darkTheme = createTheme({ palette: { mode: 'dark' } })
 
     return (
+        <ThemeProvider theme={darkTheme}>
         <Container maxWidth="md">
-            <Typography variant="h1" sx={{ fontSize: 40, textAlign: "center" }}>
+            <Typography variant="h1" sx={{ fontSize: 40, textAlign: "center", color: "#fff"}}>
                 Stock Price Simulator
-            </Typography>
-            <Typography variant="h2" sx={{ fontSize: 24, textAlign: "center" }}>
-                Developed by <Link href="https://mattfrench.dev" target="_blank" rel="noopener">Matt French</Link> | <Link href="https://medium.com/@matt.a.french/building-a-stock-simulator-website-using-nextjs-react-b0c204f47681" target="_blank" rel="noopener">Read the blog post</Link>
             </Typography>
 
             <Grid container spacing={5} sx={{ mt: 1 }}>
                 <Grid item xs={12} md={8}>
-                    {isLoading || error ? 
-                        <Skeleton variant="rounded" sx={{ minHeight: "100%" }} /> : 
+                    {isLoading || error ?
+                        <Skeleton variant="rounded" sx={{ minHeight: "100%" }} /> :
                         <StockChart data={chartData!} />
                     }
                 </Grid>
 
                 <Grid item xs={12} md={4}>
-                    <SettingsPanel 
+                    <SettingsPanel
                         stock={stock}
                         setStock={setStock}
                         numSims={numSims}
@@ -139,12 +138,13 @@ export default function Home() {
                     />
                 </Grid>
             </Grid>
-            
+
             <Snackbar open={snackbarIsOpen} autoHideDuration={6000} onClose={() => setSnackbarIsOpen(false)}>
                 <Alert onClose={() => setSnackbarIsOpen(false)} severity="error" sx={{ width: '100%' }}>
                     There was an error getting stock data: {error}
                 </Alert>
             </Snackbar>
         </Container>
+        </ThemeProvider>
     )
 }

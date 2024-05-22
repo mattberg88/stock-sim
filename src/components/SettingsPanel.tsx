@@ -1,13 +1,13 @@
 import { Paper, Grid, Typography, Divider, TextField, Button } from "@mui/material";
 import StockPicker from "./StockPicker";
 
-export default function SettingsPanel(props: { 
+export default function SettingsPanel(props: {
     stock: string, setStock: (s: string) => void,
     numSims: number, setNumSims: (n: number) => void,
     simLength: number, setSimLength: (n: number) => void,
     runOnClick: () => void
 }) {
-    
+
     const stockOnChange = (value: string | null) => {
         if (value !== null) {
             props.setStock(value)

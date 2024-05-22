@@ -15,6 +15,8 @@ ChartJS.register(
     Legend
 );
 
+ChartJS.defaults.borderColor = 'rgb(100,100,100)'
+
 export default function StockChart(props: { data: ChartData<"line", { x: Date, y: number }[], string> }) {
 
     const options = useMemo<any>(() => {
@@ -54,7 +56,7 @@ export default function StockChart(props: { data: ChartData<"line", { x: Date, y
             },
         };
     }, []);
-    
+
 
     return (
         <Line
