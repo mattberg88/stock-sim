@@ -1,3 +1,4 @@
+import { STOCKS } from "@/app/stocks"
 import { Autocomplete, CircularProgress, MenuItem, Select, TextField } from "@mui/material"
 import React from "react"
 import { useEffect, useState } from "react"
@@ -13,7 +14,6 @@ export default function StockPicker(props: { value: string | null, onChange: (s:
 
     useEffect(() => {
         if (!data) return
-        console.log(data)
         setOptions(data)
     }, [data, error, isLoading])
 
@@ -24,13 +24,13 @@ export default function StockPicker(props: { value: string | null, onChange: (s:
             onClose={() => setOpen(false)}
             options={options ?? []}
             isOptionEqualToValue={(option, value) => option.name === value.name}
-            getOptionLabel={(option) => option.name}      
+            getOptionLabel={(option) => option.name}
             loading={isLoading}
             onChange={(e, v) => props.onChange(v?.ticker ?? null)}
             renderInput={(params) => (
                 <TextField
                     {...params}
-                    label="Stock"
+                    label={STOCKS[0].name}
                     InputProps={{
                         ...params.InputProps,
                         endAdornment: (
@@ -43,6 +43,6 @@ export default function StockPicker(props: { value: string | null, onChange: (s:
                 />
             )}
         />
-    
+
     )
 }

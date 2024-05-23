@@ -1,13 +1,13 @@
 "use client";
 
-import StockPicker from "@/components/StockPicker";
 import StockChart from "@/components/StockChart";
-import { calculateDiffs, predictPrices } from "@/helpers/SimulationHelper";
+import { calculateDiffs, calculateMacd, predictPrices } from "@/helpers/SimulationHelper";
 import { Alert, Button, Container, Divider, Grid, Link, Paper, Skeleton, Snackbar, TextField, ThemeProvider, Typography, createTheme } from "@mui/material";
 import { ChartData } from "chart.js";
 import { useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
 import SettingsPanel from "@/components/SettingsPanel";
+import { STOCKS } from "./stocks";
 
 
 const fetcher = (url: URL) => fetch(url).then(r => r.json())
@@ -15,7 +15,7 @@ const fetcher = (url: URL) => fetch(url).then(r => r.json())
 export default function Home() {
 
     // Stock data
-    const [stock, setStock] = useState<string>("GOOG");
+    const [stock, setStock] = useState<string>(STOCKS[0].ticker);
     const { data, error, isLoading } = useSWR(`/api/stocks/${stock}`, fetcher)
 
     // Simulation settings
@@ -31,15 +31,22 @@ export default function Home() {
     const [snackbarIsOpen, setSnackbarIsOpen] = useState<boolean>(false)
 
     const runSim = async () => {
-        calculateDiffs(data.values)
-        .then((diffs: number[]) => {
-            return predictPrices(diffs, numSims, simLength, percentiles);
-        })
-        .then((prices: Map<number, number[]>) => {
+        // calculateDiffs(data.values)
+        // .then((diffs: number[]) => {
+        //     return predictPrices(diffs, numSims, simLength, percentiles);
+        // })
+        // .then((prices: Map<number, number[]>) => {
+        //     console.log(prices)
+        //     setPredictionData(prices);
+        // })
+        // .then((diffs) => {
+        //    console.log('diffs', diffs)
+
+        calculateMacd(data.prediction.values).then((prices) => {
             setPredictionData(prices);
-        })
-        .catch((err: any) => {
-            console.error(err);
+
+        }).catch((err: any) => {
+                console.error(err);
         });
     }
 
@@ -47,13 +54,12 @@ export default function Home() {
         if (!predictionData) return
 
         let datasets: { p: number; ds: { x: Date; y: number; }[]; }[] = []
-
+        console.log('predictionData', predictionData)
         predictionData.forEach((value, key) => {
 
             // Get the end date/value for each simulation
             let endDate = new Date(data.values[0].datetime);
             let endValue: number = data.values[0].close;
-
             let mappedData = value.map((n: number, i: number) => {
                 let newDate = new Date()
                 newDate.setDate(endDate.getDate() + i)
@@ -76,12 +82,13 @@ export default function Home() {
     useEffect(() => {
         // Simulate future prices
         if (!data?.values) return;
-
         setHistoricalDataSet(data.values.map((d: any) => ({ x: new Date(d.datetime), y: d.close })))
 
         runSim()
     }, [data]);
 
+    const historicalColor = 'rgb(99, 200, 200)'
+    const predictionColor = 'rgb(200, 200, 200)'
 
     let chartData = useMemo(() => {
         let chartData: ChartData<"line", { x: Date, y: number }[], string> = {
@@ -89,8 +96,8 @@ export default function Home() {
                 {
                     label: 'Historical',
                     data: historicalDataSet ?? [],
-                    borderColor: 'rgb(99, 200, 200)',
-                    backgroundColor: 'rgb(99, 200, 200, 0.5)',
+                    borderColor: historicalColor,
+                    backgroundColor: historicalColor,
                 }
             ]
         }
@@ -100,8 +107,8 @@ export default function Home() {
                 chartData.datasets.push({
                     label: `Predicition ${predicition.p}%`,
                     data: predicition.ds,
-                    borderColor: 'rgb(200, 200, 200)',
-                    backgroundColor: 'rgba(200, 200, 200, 0.5)',
+                    borderColor: predictionColor,
+                    backgroundColor: predictionColor,
                 })
             }
         }
@@ -114,8 +121,8 @@ export default function Home() {
     return (
         <ThemeProvider theme={darkTheme}>
         <Container maxWidth="md">
-            <Typography variant="h1" sx={{ fontSize: 40, textAlign: "center", color: "#fff"}}>
-                Stock Price Simulator
+            <Typography className="jacquard-12-regular" variant="h1" sx={{ fontSize: 60, textAlign: "center", color: "#fff"}}>
+                Stock Sim
             </Typography>
 
             <Grid container spacing={5} sx={{ mt: 1 }}>

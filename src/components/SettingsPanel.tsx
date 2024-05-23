@@ -15,10 +15,10 @@ export default function SettingsPanel(props: {
     }
 
     return (
-        <Paper sx={{ p: 2 }}>
+        <Paper sx={{ p: 1 }}>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
-                    <Typography variant="h6">
+                    <Typography className="jacquard-12-regular" variant="h4">
                         Settings
                     </Typography>
                 </Grid>

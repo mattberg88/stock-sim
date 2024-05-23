@@ -14,13 +14,16 @@ ChartJS.register(
     Tooltip,
     Legend
 );
+ChartJS.defaults.color = 'rgb(180,180,180)'
+ChartJS.defaults.borderColor = 'rgb(150,150,150)'
+ChartJS.defaults.font.family = "Helvetica";
 
-ChartJS.defaults.borderColor = 'rgb(100,100,100)'
 
 export default function StockChart(props: { data: ChartData<"line", { x: Date, y: number }[], string> }) {
 
     const options = useMemo<any>(() => {
         return {
+            defaultFontFamily: 'Times',
             responsive: true,
             scales: {
                 x: {
